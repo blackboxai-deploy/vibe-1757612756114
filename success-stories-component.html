@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Success Stories Component</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 200vh; /* Extra height to enable scrolling */
+            padding: 0;
+        }
+
+        /* Main container for the Success Stories section */
+        .success-stories-section {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Section title styling */
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .section-title.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-title h2 {
+            font-size: 3rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .section-title p {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Container for the sliding carousel */
+        .carousel-container {
+            width: 100%;
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s ease-out 0.3s; /* Delayed animation after title */
+        }
+
+        .carousel-container.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Gradient masks for smooth fade effect on edges */
+        .carousel-container::before,
+        .carousel-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 100px;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .carousel-container::before {
+            left: 0;
+            background: linear-gradient(to right, #f5f7fa, transparent);
+        }
+
+        .carousel-container::after {
+            right: 0;
+            background: linear-gradient(to left, #c3cfe2, transparent);
+        }
+
+        /* The sliding track that contains all images */
+        .carousel-track {
+            display: flex;
+            height: 100%;
+            width: max-content;
+            animation: slideRightToLeft 20s linear infinite;
+            gap: 60px;
+            align-items: center;
+        }
+
+        /* Individual image card styling */
+        .image-card {
+            position: relative;
+            width: 280px;
+            height: 320px;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+
+        /* Create tilting effect - alternating angles for each card */
+        .image-card:nth-child(1) { transform: rotate(-8deg); }
+        .image-card:nth-child(2) { transform: rotate(5deg); }
+        .image-card:nth-child(3) { transform: rotate(-12deg); }
+        .image-card:nth-child(4) { transform: rotate(8deg); }
+        .image-card:nth-child(5) { transform: rotate(-6deg); }
+        .image-card:nth-child(6) { transform: rotate(10deg); }
+        .image-card:nth-child(7) { transform: rotate(-15deg); }
+        .image-card:nth-child(8) { transform: rotate(4deg); }
+
+        /* Hover effect - straighten and scale on hover */
+        .image-card:hover {
+            transform: rotate(0deg) scale(1.05);
+            z-index: 5;
+        }
+
+        /* Image container with rounded corners and shadow */
+        .image-wrapper {
+            width: 100%;
+            height: 240px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        /* Actual image styling */
+        .image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        /* Image zoom effect on hover */
+        .image-card:hover .image-wrapper img {
+            transform: scale(1.1);
+        }
+
+        /* Slogan text positioning */
+        .slogan {
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            width: 100%;
+        }
+
+        .slogan h3 {
+            font-size: 1.4rem;
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
+        }
+
+        .slogan p {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        /* Keyframe animation for right-to-left sliding */
+        @keyframes slideRightToLeft {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        /* Pause animation on hover for better user experience */
+        .carousel-container:hover .carousel-track {
+            animation-play-state: paused;
+        }
+
+        /* Responsive design for tablets */
+        @media (max-width: 1024px) {
+            .section-title h2 {
+                font-size: 2.5rem;
+            }
+            
+            .image-card {
+                width: 240px;
+                height: 280px;
+            }
+            
+            .image-wrapper {
+                height: 200px;
+            }
+            
+            .carousel-track {
+                gap: 40px;
+            }
+        }
+
+        /* Responsive design for mobile phones */
+        @media (max-width: 768px) {
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
+            .section-title p {
+                font-size: 1rem;
+            }
+            
+            .carousel-container {
+                height: 300px;
+            }
+            
+            .image-card {
+                width: 200px;
+                height: 240px;
+            }
+            
+            .image-wrapper {
+                height: 160px;
+            }
+            
+            .carousel-track {
+                gap: 30px;
+            }
+            
+            .slogan h3 {
+                font-size: 1.1rem;
+            }
+            
+            .slogan p {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Extra small mobile devices */
+        @media (max-width: 480px) {
+            .section-title h2 {
+                font-size: 1.5rem;
+            }
+            
+            .carousel-container {
+                height: 250px;
+            }
+            
+            .image-card {
+                width: 160px;
+                height: 200px;
+            }
+            
+            .image-wrapper {
+                height: 130px;
+            }
+            
+            .carousel-track {
+                gap: 20px;
+            }
+            
+            .slogan {
+                bottom: -40px;
+            }
+        }
+
+        /* Demo content above the component */
+        .demo-content {
+            text-align: center;
+            padding: 50px 20px;
+            background: white;
+        }
+
+        .demo-content h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .demo-content p {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <!-- Demo content to enable scrolling -->
+    <div class="demo-content">
+        <h1>Social Media Consulting Success Stories</h1>
+        <p>Scroll down to see our animated success stories component in action. The component will fade in when it comes into view, and the images will continuously slide from right to left with a smooth animation effect.</p>
+        <br><br>
+        <p style="color: #3498db; font-weight: bold;">↓ Scroll down to see the component ↓</p>
+    </div>
+
+    <!-- Main Success Stories Component -->
+    <div class="success-stories-section" id="successStories">
+        <!-- Section title and description -->
+        <div class="section-title" id="sectionTitle">
+            <h2>Our Success Stories</h2>
+            <p>Discover how we've transformed brands across industries with data-driven social media strategies that deliver measurable results and sustainable growth.</p>
+        </div>
+
+        <!-- Carousel container with sliding images -->
+        <div class="carousel-container" id="carouselContainer">
+            <div class="carousel-track">
+                <!-- Image Card 1: Technology -->
+                <div class="image-card">
+                    <div class="image-wrapper">
+                        <img src="https://placehold.co/280x240/e3f2fd/1976d2?text=Tech+Innovation" 
+                             alt="Tech Innovation Success Story">
+                    </div>
+                    <div class="slogan">
+                        <h3>Tech Innovation</h3>
+                        <p>"Digital transformation made simple"</p>
+                    </div>
+                </div>
+
+                <!-- Image Card 2: E-commerce -->
+                <div class="image-card">
+                    <div class="image-wrapper">
+                        <img src="https://placehold.co/280x240/f3e5f5/7b1fa2?text=E-commerce+Growth" 
+                             alt="E-commerce Growth Success Story">
+                    </div>
+                    <div class="slogan">
+                        <h3>E-commerce Growth</h3>
+                        <p>"Sales that speak for themselves"</p>
+                    </div>
+                </div>
+
+                <!-- Image Card 3: Food & Beverage -->
+                <div class="image-card">
+                    <div class="image-wrapper">
+                        <img src="https://placehold.co/280x240/fff3e0/f57c00?text=Food+%26+Dining" 
+                             alt="Food & Dining Success Story">
+                    </div>
+                    <div class="slogan">
+                        <h3>Food & Dining</h3>
+                        <p>"Flavor is now lighter"</p>
+                    </div>
+                </div>
+
+                <!-- Image Card 4: Healthcare -->
+                <div class="image-card">
+                    <div class="image-wrapper">
+                        <img src="https://placehold.co/280x240/e8f5e8/388e3c?text=Healthcare+Excellence" 
+                             alt="Healthcare Excellence Success Story">
+                    </div>
+                    <div class="slogan">
+                        <h3>Healthcare Excellence</h3>
+                        <p>"Pure in every service"</p>
+                    </div>
+                </div>
+
+                <!-- Duplicate cards for seamless infinite loop -->
+                <!-- Image Card 5: Technology (Duplicate) -->
+                <div class="image-card">
+                    <div class="image-wrapper">
+                        <img src="https://placehold.co/280x240/e3f2fd/1976d2?text=Tech+Innovation" 
+                             alt="Tech Innovation Success Story">
+                    </div>
+                    <div class="slogan">
+                        <h3>Tech Innovation</h3>
+                        <p>"Digital transformation made simple"</p>
+                    </div>
+                </div>
+
+                <!-- Image Card 6: E-commerce (Duplicate) -->
+                <div class="image-card">
+                    <div class="image-wrapper">
+                        <img src="https://placehold.co/280x240/f3e5f5/7b1fa2?text=E-commerce+Growth" 
+                             alt="E-commerce Growth Success Story">
+                    </div>
+                    <div class="slogan">
+                        <h3>E-commerce Growth</h3>
+                        <p>"Sales that speak for themselves"</p>
+                    </div>
+                </div>
+
+                <!-- Image Card 7: Food & Beverage (Duplicate) -->
+                <div class="image-card">
+                    <div class="image-wrapper">
+                        <img src="https://placehold.co/280x240/fff3e0/f57c00?text=Food+%26+Dining" 
+                             alt="Food & Dining Success Story">
+                    </div>
+                    <div class="slogan">
+                        <h3>Food & Dining</h3>
+                        <p>"Flavor is now lighter"</p>
+                    </div>
+                </div>
+
+                <!-- Image Card 8: Healthcare (Duplicate) -->
+                <div class="image-card">
+                    <div class="image-wrapper">
+                        <img src="https://placehold.co/280x240/e8f5e8/388e3c?text=Healthcare+Excellence" 
+                             alt="Healthcare Excellence Success Story">
+                    </div>
+                    <div class="slogan">
+                        <h3>Healthcare Excellence</h3>
+                        <p>"Pure in every service"</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Wait for DOM to be fully loaded before running scripts
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // Get references to the elements we need to animate
+            const successStoriesSection = document.getElementById('successStories');
+            const sectionTitle = document.getElementById('sectionTitle');
+            const carouselContainer = document.getElementById('carouselContainer');
+            
+            // Create an Intersection Observer to detect when elements come into view
+            // This is more efficient than listening to scroll events
+            const observerOptions = {
+                root: null, // Use the viewport as the root
+                rootMargin: '0px', // No margin around the viewport
+                threshold: 0.3 // Trigger when 30% of the element is visible
+            };
+            
+            // Callback function that runs when observed elements enter/leave view
+            const observerCallback = function(entries, observer) {
+                entries.forEach(entry => {
+                    // Check if the element is intersecting (visible in viewport)
+                    if (entry.isIntersecting) {
+                        // Add the 'animate' class to trigger CSS animations
+                        entry.target.classList.add('animate');
+                        
+                        // Optional: Stop observing this element once animated
+                        // observer.unobserve(entry.target);
+                    }
+                });
+            };
+            
+            // Create the observer instance with our callback and options
+            const observer = new IntersectionObserver(observerCallback, observerOptions);
+            
+            // Start observing our target elements
+            observer.observe(sectionTitle);
+            observer.observe(carouselContainer);
+            
+            // Optional: Add keyboard accessibility
+            // Allow users to pause animation with spacebar
+            document.addEventListener('keydown', function(event) {
+                if (event.code === 'Space') {
+                    const track = document.querySelector('.carousel-track');
+                    const currentState = window.getComputedStyle(track).animationPlayState;
+                    
+                    // Toggle animation play state
+                    if (currentState === 'paused') {
+                        track.style.animationPlayState = 'running';
+                    } else {
+                        track.style.animationPlayState = 'paused';
+                    }
+                    
+                    // Prevent page scroll when spacebar is pressed
+                    event.preventDefault();
+                }
+            });
+            
+            // Optional: Performance optimization for reduced motion preference
+            // Respect user's motion preferences for accessibility
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                // Slow down or disable animations for users who prefer reduced motion
+                const style = document.createElement('style');
+                style.textContent = `
+                    .carousel-track {
+                        animation-duration: 40s; /* Slower animation */
+                    }
+                    .section-title, .carousel-container {
+                        transition-duration: 0.3s; /* Faster transitions */
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+            
+            // Optional: Add touch/swipe support for mobile devices
+            let startX = 0;
+            let isDragging = false;
+            
+            carouselContainer.addEventListener('touchstart', function(e) {
+                startX = e.touches[0].clientX;
+                isDragging = true;
+                // Pause animation during touch interaction
+                document.querySelector('.carousel-track').style.animationPlayState = 'paused';
+            });
+            
+            carouselContainer.addEventListener('touchmove', function(e) {
+                if (!isDragging) return;
+                
+                const currentX = e.touches[0].clientX;
+                const diff = startX - currentX;
+                
+                // You could add custom swipe behavior here if needed
+                // For now, we just prevent default scrolling
+                if (Math.abs(diff) > 10) {
+                    e.preventDefault();
+                }
+            });
+            
+            carouselContainer.addEventListener('touchend', function(e) {
+                isDragging = false;
+                // Resume animation after touch interaction
+                setTimeout(() => {
+                    document.querySelector('.carousel-track').style.animationPlayState = 'running';
+                }, 1000);
+            });
+            
+            // Console log for debugging - remove in production
+            console.log('Success Stories Component initialized successfully!');
+            console.log('- Intersection Observer created');
+            console.log('- Keyboard controls enabled (Spacebar to pause/play)');
+            console.log('- Touch controls enabled for mobile');
+            console.log('- Reduced motion preferences respected');
+        });
+    </script>
+</body>
+</html>
