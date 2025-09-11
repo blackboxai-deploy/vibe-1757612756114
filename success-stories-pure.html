@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Success Stories - Animated Carousel</title>
+    <style>
+        /* ==========================================
+           RESET AND BASE STYLES
+           ========================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 200vh; /* Extra height for scrolling demo */
+        }
+
+        /* ==========================================
+           MAIN SECTION CONTAINER
+           ========================================== */
+        .success-stories-section {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ==========================================
+           SECTION TITLE ANIMATION
+           ========================================== */
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+            opacity: 0; /* Start invisible */
+            transform: translateY(30px); /* Start below */
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smooth easing */
+        }
+
+        /* Animation trigger class */
+        .section-title.fade-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-title h2 {
+            font-size: 3rem;
+            color: #1e293b;
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title p {
+            font-size: 1.2rem;
+            color: #64748b;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* ==========================================
+           CAROUSEL CONTAINER
+           ========================================== */
+        .carousel-container {
+            width: 100%;
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+            opacity: 0; /* Start invisible */
+            transform: translateY(50px); /* Start below */
+            transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s; /* Delayed animation */
+        }
+
+        /* Animation trigger class */
+        .carousel-container.fade-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ==========================================
+           GRADIENT FADE MASKS
+           ========================================== */
+        /* Left gradient mask for smooth fade effect */
+        .carousel-container::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 120px;
+            background: linear-gradient(to right, #f8fafc, transparent);
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        /* Right gradient mask for smooth fade effect */
+        .carousel-container::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 120px;
+            background: linear-gradient(to left, #e2e8f0, transparent);
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        /* ==========================================
+           SLIDING TRACK
+           ========================================== */
+        .carousel-track {
+            display: flex;
+            height: 100%;
+            width: max-content;
+            gap: 60px;
+            align-items: center;
+            animation: slideRightToLeft 20s linear infinite;
+        }
+
+        /* ==========================================
+           IMAGE CARDS
+           ========================================== */
+        .image-card {
+            position: relative;
+            width: 280px;
+            height: 320px;
+            flex-shrink: 0;
+            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            cursor: pointer;
+        }
+
+        /* ==========================================
+           TILTING EFFECTS
+           Different rotation angles for visual variety
+           ========================================== */
+        .image-card:nth-child(1) { transform: rotate(-8deg); }
+        .image-card:nth-child(2) { transform: rotate(5deg); }
+        .image-card:nth-child(3) { transform: rotate(-12deg); }
+        .image-card:nth-child(4) { transform: rotate(8deg); }
+        .image-card:nth-child(5) { transform: rotate(-6deg); }
+        .image-card:nth-child(6) { transform: rotate(10deg); }
+        .image-card:nth-child(7) { transform: rotate(-15deg); }
+        .image-card:nth-child(8) { transform: rotate(4deg); }
+
+        /* Hover effect - straighten and scale the card */
+        .image-card:hover {
+            transform: rotate(0deg) scale(1.08);
+            z-index: 5;
+        }
+
+        /* ==========================================
+           IMAGE WRAPPER
+           ========================================== */
+        .image-wrapper {
+            width: 100%;
+            height: 240px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            position: relative;
+            background: white;
+        }
+
+        /* ==========================================
+           IMAGE STYLING
+           ========================================== */
+        .image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        /* Image zoom effect on hover */
+        .image-card:hover .image-wrapper img {
+            transform: scale(1.15);
+        }
+
+        /* ==========================================
+           SLOGAN STYLING
+           ========================================== */
+        .slogan {
+            position: absolute;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .slogan h3 {
+            font-size: 1.4rem;
+            color: #1e293b;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 6px rgba(255, 255, 255, 0.9);
+        }
+
+        .slogan p {
+            font-size: 0.95rem;
+            color: #64748b;
+            font-style: italic;
+            font-weight: 500;
+        }
+
+        /* Enhance slogan visibility on hover */
+        .image-card:hover .slogan {
+            transform: translateX(-50%) translateY(-10px);
+        }
+
+        .image-card:hover .slogan h3 {
+            color: #3b82f6;
+        }
+
+        /* ==========================================
+           CAROUSEL ANIMATION
+           ========================================== */
+        @keyframes slideRightToLeft {
+            0% {
+                transform: translateX(100%); /* Start from right */
+            }
+            100% {
+                transform: translateX(-100%); /* End at left */
+            }
+        }
+
+        /* Pause animation when hovering over carousel */
+        .carousel-container:hover .carousel-track {
+            animation-play-state: paused;
+        }
+
+        /* ==========================================
+           RESPONSIVE DESIGN - TABLET
+           ========================================== */
+        @media (max-width: 1024px) {
+            .section-title h2 {
+                font-size: 2.5rem;
+            }
+            
+            .image-card {
+                width: 240px;
+                height: 280px;
+            }
+            
+            .image-wrapper {
+                height: 200px;
+            }
+            
+            .carousel-track {
+                gap: 40px;
+            }
+            
+            .slogan h3 {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* ==========================================
+           RESPONSIVE DESIGN - MOBILE
+           ========================================== */
+        @media (max-width: 768px) {
+            .success-stories-section {
+                padding: 60px 15px;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
+            .section-title p {
+                font-size: 1rem;
+            }
+            
+            .carousel-container {
+                height: 300px;
+            }
+            
+            .image-card {
+                width: 200px;
+                height: 240px;
+            }
+            
+            .image-wrapper {
+                height: 160px;
+            }
+            
+            .carousel-track {
+                gap: 30px;
+            }
+            
+            .slogan {
+                bottom: -50px;
+            }
+            
+            .slogan h3 {
+                font-size: 1.1rem;
+            }
+            
+            .slogan p {
+                font-size: 0.85rem;
+            }
+        }
+
+        /* ==========================================
+           RESPONSIVE DESIGN - SMALL MOBILE
+           ========================================== */
+        @media (max-width: 480px) {
+            .section-title h2 {
+                font-size: 1.8rem;
+            }
+            
+            .carousel-container {
+                height: 260px;
+            }
+            
+            .image-card {
+                width: 170px;
+                height: 210px;
+            }
+            
+            .image-wrapper {
+                height: 140px;
+            }
+            
+            .carousel-track {
+                gap: 25px;
+            }
+            
+            .slogan {
+                bottom: -45px;
+            }
+            
+            .slogan h3 {
+                font-size: 1rem;
+            }
+            
+            .slogan p {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* ==========================================
+           DEMO CONTENT STYLES
+           ========================================== */
+        .demo-content {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .demo-content h1 {
+            font-size: 2.5rem;
+            color: #1e293b;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .demo-content p {
+            font-size: 1.1rem;
+            color: #64748b;
+            max-width: 800px;
+            margin: 0 auto 20px;
+            line-height: 1.8;
+        }
+
+        .scroll-indicator {
+            color: #3b82f6;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-top: 30px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ==========================================
+         DEMO CONTENT SECTION
+         ========================================== -->
+    <div class="demo-content">
+        <h1>Social Media Success Stories</h1>
+        <p>
+            This is a demonstration of the animated success stories component. 
+            As you scroll down, you'll see the component fade in with a smooth animation.
+            The images will continuously slide from right to left in an infinite loop.
+        </p>
+        <p>
+            Each image is tilted at a different angle to create visual interest, 
+            and they straighten out when you hover over them.
+        </p>
+        <div class="scroll-indicator">
+            ↓ Scroll down to see the animation ↓
+        </div>
+    </div>
+
+    <!-- ==========================================
+         SUCCESS STORIES COMPONENT
+         ========================================== -->
+    <div class="success-stories-section" id="successStories">
+        <!-- Section title -->
+        <div class="section-title" id="sectionTitle">
+            <h2>Our Success Stories</h2>
+            <p>
+                Discover how we've transformed brands across industries with data-driven 
+                social media strategies that deliver measurable results and sustainable growth.
+            </p>
+        </div>
+
+        <!-- Carousel container -->
+        <div class="carousel-container" id="carouselContainer">
+            <div class="carousel-track">
+                <!-- Image Card 1: Technology -->
+                <div class="image-card">
+                    <div class="image-wrapper">
+                        <img src="https://placehold.co/280x240/dbeafe/1d4ed8?text=Tech+Innovation" 
+                             alt="Technology Success Story">
+                    </div>
+                    <div class="slogan">
+                        <h3>Tech Innovation</h3>
+                        <p>"Digital transformation made simple"</p>
+                    </div>
+                </div>
+
+                <!-- Image Card 2: E-commerce -->
+                <div class="image-card">
+                    <div class="image-wrapper">
+                        <img src="https://placehold.co/280x240/fce7f3/be185d?text=E-commerce+Growth" 
+                             alt="E-commerce Success Story">
+                    </div>
+                    <div class="slogan">
+                        <h3>E-commerce Growth</h3>
+                        <p>"Sales that speak for themselves"</p>
+                    </div>
+                </div>
+
+                <!-- Image Card 3: Food & Beverage -->
+                <div class="image-card">
+                    <div class="image-wrapper">
+                        <img src="https://placehold.co/280x240/fef3c7/d97706?text=Food+%26+Dining" 
+                             alt="Food & Dining Success Story">
+                    </div>
+                    <div class="slogan">
+                        <h3>Food & Dining</h3>
+                        <p>"Flavor is now lighter"</p>
+                    </div>
+                </div>
+
+                <!-- Image Card 4: Healthcare -->
+                <div class="image-card">
+                    <div class="image-wrapper">
+                        <img src="https://placehold.co/280x240/dcfce7/16a34a?text=Healthcare+Excellence" 
+                             alt="Healthcare Success Story">
+                    </div>
+                    <div class="slogan">
+                        <h3>Healthcare Excellence</h3>
+                        <p>"Pure in every service"</p>
+                    </div>
+                </div>
+
+                <!-- Duplicate cards for seamless infinite loop -->
+                <div class="image-card">
+                    <div class="image-wrapper">
+                        <img src="https://placehold.co/280x240/dbeafe/1d4ed8?text=Tech+Innovation" 
+                             alt="Technology Success Story">
+                    </div>
+                    <div class="slogan">
+                        <h3>Tech Innovation</h3>
+                        <p>"Digital transformation made simple"</p>
+                    </div>
+                </div>
+
+                <div class="image-card">
+                    <div class="image-wrapper">
+                        <img src="https://placehold.co/280x240/fce7f3/be185d?text=E-commerce+Growth" 
+                             alt="E-commerce Success Story">
+                    </div>
+                    <div class="slogan">
+                        <h3>E-commerce Growth</h3>
+                        <p>"Sales that speak for themselves"</p>
+                    </div>
+                </div>
+
+                <div class="image-card">
+                    <div class="image-wrapper">
+                        <img src="https://placehold.co/280x240/fef3c7/d97706?text=Food+%26+Dining" 
+                             alt="Food & Dining Success Story">
+                    </div>
+                    <div class="slogan">
+                        <h3>Food & Dining</h3>
+                        <p>"Flavor is now lighter"</p>
+                    </div>
+                </div>
+
+                <div class="image-card">
+                    <div class="image-wrapper">
+                        <img src="https://placehold.co/280x240/dcfce7/16a34a?text=Healthcare+Excellence" 
+                             alt="Healthcare Success Story">
+                    </div>
+                    <div class="slogan">
+                        <h3>Healthcare Excellence</h3>
+                        <p>"Pure in every service"</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         JAVASCRIPT FOR ANIMATIONS
+         ========================================== -->
+    <script>
+        // Wait for the page to fully load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Success Stories Component Loading...');
+            
+            // Get references to the elements we want to animate
+            const sectionTitle = document.getElementById('sectionTitle');
+            const carouselContainer = document.getElementById('carouselContainer');
+            const successStoriesSection = document.getElementById('successStories');
+            
+            // ==========================================
+            // INTERSECTION OBSERVER SETUP
+            // This detects when elements come into view
+            // ==========================================
+            const observerOptions = {
+                root: null, // Use viewport as root
+                rootMargin: '0px 0px -10% 0px', // Trigger slightly before element is fully visible
+                threshold: 0.2 // Trigger when 20% of element is visible
+            };
+            
+            // Callback function for when elements intersect with viewport
+            const handleIntersection = function(entries, observer) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        console.log('✨ Element came into view:', entry.target.id);
+                        
+                        // Add fade-in class to trigger CSS animation
+                        entry.target.classList.add('fade-in');
+                        
+                        // Optional: Stop observing this element after animation
+                        // observer.unobserve(entry.target);
+                    }
+                });
+            };
+            
+            // Create the intersection observer
+            const observer = new IntersectionObserver(handleIntersection, observerOptions);
+            
+            // Start observing our target elements
+            observer.observe(sectionTitle);
+            observer.observe(carouselContainer);
+            
+            console.log('👀 Intersection Observer initialized');
+            
+            // ==========================================
+            // KEYBOARD CONTROLS
+            // Allow users to pause/play animation with spacebar
+            // ==========================================
+            document.addEventListener('keydown', function(event) {
+                if (event.code === 'Space' || event.key === ' ') {
+                    const track = document.querySelector('.carousel-track');
+                    const currentState = window.getComputedStyle(track).animationPlayState;
+                    
+                    // Toggle animation state
+                    if (currentState === 'paused') {
+                        track.style.animationPlayState = 'running';
+                        console.log('▶️ Animation resumed');
+                    } else {
+                        track.style.animationPlayState = 'paused';
+                        console.log('⏸️ Animation paused');
+                    }
+                    
+                    // Prevent page scroll
+                    event.preventDefault();
+                }
+            });
+            
+            console.log('⌨️ Keyboard controls enabled (Spacebar to pause/play)');
+            
+            // ==========================================
+            // ACCESSIBILITY: REDUCED MOTION SUPPORT
+            // Respect user's motion preferences
+            // ==========================================
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                console.log('♿ Reduced motion detected, slowing animations');
+                
+                const style = document.createElement('style');
+                style.textContent = `
+                    .carousel-track {
+                        animation-duration: 40s !important; /* Slower animation */
+                    }
+                    .section-title, .carousel-container {
+                        transition-duration: 0.3s !important; /* Faster transitions */
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+            
+            // ==========================================
+            // TOUCH/MOBILE SUPPORT
+            // Handle touch interactions on mobile
+            // ==========================================
+            let touchStartX = 0;
+            let isDragging = false;
+            const track = document.querySelector('.carousel-track');
+            
+            carouselContainer.addEventListener('touchstart', function(e) {
+                touchStartX = e.touches[0].clientX;
+                isDragging = true;
+                
+                // Pause animation during touch
+                track.style.animationPlayState = 'paused';
+                console.log('👆 Touch interaction started');
+            }, { passive: true });
+            
+            carouselContainer.addEventListener('touchmove', function(e) {
+                if (!isDragging) return;
+                
+                const currentX = e.touches[0].clientX;
+                const diffX = touchStartX - currentX;
+                
+                // Prevent horizontal scrolling if swipe is detected
+                if (Math.abs(diffX) > 10) {
+                    e.preventDefault();
+                }
+            });
+            
+            carouselContainer.addEventListener('touchend', function(e) {
+                isDragging = false;
+                
+                // Resume animation after a short delay
+                setTimeout(() => {
+                    track.style.animationPlayState = 'running';
+                    console.log('👆 Touch interaction ended, animation resumed');
+                }, 1000);
+            }, { passive: true });
+            
+            console.log('📱 Touch controls enabled');
+            
+            // ==========================================
+            // PERFORMANCE MONITORING
+            // Log component performance
+            // ==========================================
+            console.log('🎯 Success Stories Component fully initialized!');
+            console.log('Features enabled:');
+            console.log('  ✅ Scroll-triggered animations');
+            console.log('  ✅ Infinite carousel animation');
+            console.log('  ✅ Keyboard controls (Spacebar)');
+            console.log('  ✅ Touch/mobile support');
+            console.log('  ✅ Accessibility features');
+            console.log('  ✅ Responsive design');
+            
+            // Optional: Add performance observer for monitoring
+            if ('PerformanceObserver' in window) {
+                const perfObserver = new PerformanceObserver((list) => {
+                    list.getEntries().forEach((entry) => {
+                        if (entry.entryType === 'measure') {
+                            console.log(`⏱️ Performance: ${entry.name} took ${entry.duration}ms`);
+                        }
+                    });
+                });
+                
+                // Observe timing measurements
+                try {
+                    perfObserver.observe({ entryTypes: ['measure'] });
+                } catch (e) {
+                    // Fail silently if browser doesn't support this
+                }
+            }
+        });
+    </script>
+</body>
+</html>
